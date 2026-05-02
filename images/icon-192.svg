@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="38" fill="url(#bg2)"/>
+  <g transform="translate(96,88)">
+    <rect x="-28" y="-32" width="56" height="64" rx="4" fill="url(#acc2)" opacity="0.9"/>
+    <rect x="-48" y="-16" width="20" height="48" rx="3" fill="url(#acc2)" opacity="0.7"/>
+    <rect x="28" y="-16" width="20" height="48" rx="3" fill="url(#acc2)" opacity="0.7"/>
+    <rect x="-20" y="-24" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+    <rect x="-4" y="-24" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+    <rect x="12" y="-24" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.85)"/>
+    <rect x="-20" y="-10" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+    <rect x="-4" y="-10" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+    <rect x="12" y="-10" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+    <rect x="-6" y="16" width="12" height="16" rx="2" fill="rgba(255,255,255,0.9)"/>
+    <rect x="-12" y="-38" width="24" height="6" rx="3" fill="rgba(251,191,36,0.9)"/>
+  </g>
+  <text x="96" y="158" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="700" fill="white" letter-spacing="3">LUXE</text>
+</svg>

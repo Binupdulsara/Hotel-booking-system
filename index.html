@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hotel Nexus</title>
+    <meta name="description"
+        content="Book luxury hotel rooms at Luxe. Experience premium stays with virtual 360° tours, seamless booking, and add-on amenities.">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Luxe">
+    <link rel="apple-touch-icon" href="images/icon-192.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Pannellum (360 Viewer) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="logo" id="logo-trigger" title="Luxe Hotels">
+                <i class="fa-solid fa-hotel"></i> The Hotel Nexus
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-target="dashboard">Rooms</a></li>
+                <li><a href="#" data-target="my-bookings">My Bookings</a></li>
+                <!-- Admin nav (hidden by default, shown only for admin role) -->
+                <li id="nav-admin-li" style="display: none;"><a href="#" data-target="admin-dashboard"><i
+                            class="fa-solid fa-lock"></i> Admin</a></li>
+                <!-- User auth buttons -->
+                <li id="nav-signin-li"><a href="#" id="nav-signin-btn"><i class="fa-solid fa-right-to-bracket"></i> Sign
+                        In</a></li>
+                <li id="nav-user-li" style="display: none;">
+                    <div class="user-greeting">
+                        <span class="user-avatar"><i class="fa-solid fa-user-circle"></i></span>
+                        <span id="user-display-name">Guest</span>
+                    </div>
+                </li>
+                <li id="nav-logout-li" style="display: none;"><a href="#" id="nav-logout-btn"><i
+                            class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Experience Luxury.</h1>
+                <p>Book your perfect stay in just a few clicks.</p>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Dashboard (Rooms List) -->
+            <section id="dashboard" class="view-section active">
+                <div class="section-header">
+                    <h2>Available Rooms</h2>
+                    <div class="filters" style="display: flex; gap: 10px;">
+                        <select id="type-filter">
+                            <option value="all">All Types</option>
+                            <option value="Single">Single</option>
+                            <option value="Double">Double</option>
+                            <option value="Suite">Suite</option>
+                        </select>
+                        <input type="number" id="capacity-filter" placeholder="Min Guests" min="1" class="form-input"
+                            style="width: 120px;">
+                        <input type="number" id="max-price-filter" placeholder="Max Price ($)" min="0"
+                            class="form-input" style="width: 140px;">
+                    </div>
+                </div>
+                <div class="rooms-grid" id="rooms-grid">
+                    <!-- Rooms will be populated here by JS -->
+                </div>
+            </section>
+
+            <!-- My Bookings -->
+            <section id="my-bookings" class="view-section">
+                <div class="section-header">
+                    <h2>My Bookings</h2>
+                    <p class="subtitle">Manage your reservations</p>
+                </div>
+                <div class="bookings-list" id="bookings-list">
+                    <!-- Bookings will be populated here by JS -->
+                </div>
+            </section>
+
+            <!-- Admin Dashboard -->
+            <section id="admin-dashboard" class="view-section">
+                <div class="section-header">
+                    <h2>Admin Dashboard</h2>
+                    <p class="subtitle">Inventory Management</p>
+                </div>
+
+                <div class="glass-effect" style="padding: 20px; margin-bottom: 30px;">
+                    <h3>Add New Room</h3>
+                    <form id="add-room-form"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; align-items: end;">
+                        <div>
+                            <label>Room Number</label>
+                            <input type="number" id="new-room-id" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label>Type</label>
+                            <select id="new-room-type"
+                                style="width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                                <option value="Single" style="color: black;">Single</option>
+                                <option value="Double" style="color: black;">Double</option>
+                                <option value="Suite" style="color: black;">Suite</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Price</label>
+                            <input type="number" id="new-room-price" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label>Capacity</label>
+                            <input type="number" id="new-room-capacity" required style="width: 100%;">
+                        </div>
+                        <div>
+                            <label>Bed (e.g. 1 Queen)</label>
+                            <input type="text" id="new-room-bed" required style="width: 100%;">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="height: 45px;">Add Room</button>
+                    </form>
+                </div>
+
+                <h3>Current Inventory</h3>
+                <div class="admin-rooms-list" id="admin-rooms-list" style="display: grid; gap: 15px; margin-top: 15px;">
+                    <!-- Admin rooms populated here -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Modals -->
+
+        <!-- 360 Viewer Modal -->
+        <div class="modal-overlay" id="pano-modal">
+            <div class="modal-content glass-effect" style="max-width: 800px; width: 90%; padding: 20px;">
+                <button class="close-modal" aria-label="Close" onclick="closePano()"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <h3 id="pano-title">Virtual 360° Tour</h3>
+                <div id="panorama-container"
+                    style="width: 100%; height: 400px; background: #000; border-radius: 8px; margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- User Auth Modal (Sign In / Register) -->
+        <div class="modal-overlay" id="auth-modal">
+            <div class="modal-content glass-effect" style="max-width: 420px;">
+                <button class="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+                <!-- Tab Header -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-auth-tab="signin">Sign In</button>
+                    <button class="auth-tab" data-auth-tab="register">Register</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <form id="signin-form" class="auth-form active" data-auth-panel="signin">
+                    <div class="form-group">
+                        <label for="signin-username"><i class="fa-solid fa-user"></i> Username</label>
+                        <input type="text" id="signin-username" required placeholder="Enter your username"
+                            autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="signin-password" required placeholder="Enter your password"
+                                autocomplete="current-password">
+                            <button type="button" class="password-toggle" tabindex="-1"><i
+                                    class="fa-solid fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="signin-submit-btn">
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                    </button>
+                    <p class="auth-switch-text">Don't have an account? <a href="#" class="auth-switch-link"
+                            data-switch-to="register">Create one</a></p>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="auth-form" data-auth-panel="register">
+                    <div class="form-group">
+                        <label for="register-fullname"><i class="fa-solid fa-id-card"></i> Full Name</label>
+                        <input type="text" id="register-fullname" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-username"><i class="fa-solid fa-user"></i> Username</label>
+                        <input type="text" id="register-username" required placeholder="Choose a username" minlength="3"
+                            autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="register-password" required placeholder="Min 6 characters"
+                                minlength="6" autocomplete="new-password">
+                            <button type="button" class="password-toggle" tabindex="-1"><i
+                                    class="fa-solid fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="register-confirm" required placeholder="Confirm your password"
+                                autocomplete="new-password">
+                            <button type="button" class="password-toggle" tabindex="-1"><i
+                                    class="fa-solid fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="register-submit-btn">
+                        <i class="fa-solid fa-user-plus"></i> Create Account
+                    </button>
+                    <p class="auth-switch-text">Already have an account? <a href="#" class="auth-switch-link"
+                            data-switch-to="signin">Sign in</a></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal (hidden, only via secret trigger) -->
+        <div class="modal-overlay" id="admin-login-modal">
+            <div class="modal-content glass-effect" style="max-width: 400px;">
+                <button class="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fa-solid fa-shield-halved"
+                        style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px;"></i>
+                    <h3>Admin Access</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Restricted area — authorized personnel only
+                    </p>
+                </div>
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" required placeholder="Admin username"
+                            autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="admin-password" required placeholder="Admin password"
+                                autocomplete="current-password">
+                            <button type="button" class="password-toggle" tabindex="-1"><i
+                                    class="fa-solid fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa-solid fa-shield-halved"></i> Authenticate
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div class="modal-overlay" id="booking-modal">
+            <div class="modal-content glass-effect">
+                <button class="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                <h3>Complete Your Booking</h3>
+                <div class="room-summary" id="modal-room-summary">
+                    <!-- Room details here -->
+                </div>
+                <form id="booking-form">
+                    <input type="hidden" id="book-room-number">
+                    <div class="form-group">
+                        <label for="guest-name">Full Name</label>
+                        <input type="text" id="guest-name" required placeholder="John Doe">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="check-in">Check-in Date</label>
+                            <input type="date" id="check-in" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="check-out">Check-out Date</label>
+                            <input type="date" id="check-out" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group amenities-section">
+                        <label>Enhance Your Stay (Add-ons)</label>
+                        <div class="checkbox-group"
+                            style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                            <label class="addon-label"
+                                style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="addon-airport" value="50" class="addon-checkbox">
+                                Airport Transfer (+$50 flat)
+                            </label>
+                            <label class="addon-label"
+                                style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="addon-breakfast" value="20" class="addon-checkbox"
+                                    data-daily="true">
+                                Breakfast (+$20 / night)
+                            </label>
+                            <label class="addon-label"
+                                style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="addon-spa" value="100" class="addon-checkbox">
+                                Spa Access (+$100 flat)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="total-cost-preview"
+                        style="margin-bottom: 20px; font-size: 1.1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                        <strong>Estimated Total: </strong> <span id="live-total-cost"
+                            style="color: var(--primary); font-weight: bold; font-size: 1.3rem;">$0</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div class="modal-overlay" id="receipt-modal">
+            <div class="modal-content glass-effect receipt-content">
+                <button class="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                <div class="receipt-header">
+                    <i class="fa-solid fa-circle-check success-icon"></i>
+                    <h3>Booking Confirmed!</h3>
+                </div>
+                <div class="receipt-details" id="receipt-details">
+                    <!-- Receipt details populated here -->
+                </div>
+                <button class="btn btn-secondary btn-block" id="close-receipt-btn">Done</button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <!-- PWA Install Prompt Banner (native - Chrome/Edge/Android) -->
+        <div class="pwa-install-banner" id="pwa-install-banner">
+            <div class="pwa-banner-content">
+                <img src="images/icon-192.svg" alt="Luxe" class="pwa-banner-icon">
+                <div class="pwa-banner-text">
+                    <strong>Install Luxe</strong>
+                    <span>Offline access · Fullscreen · Fast</span>
+                </div>
+            </div>
+            <div class="pwa-banner-actions">
+                <button class="btn btn-secondary pwa-dismiss-btn" id="pwa-dismiss-btn">Not Now</button>
+                <button class="btn btn-primary pwa-install-btn" id="pwa-install-btn"><i
+                        class="fa-solid fa-download"></i> Install</button>
+            </div>
+        </div>
+
+        <!-- PWA Install Modal (iOS/Safari fallback) -->
+        <div class="modal-overlay" id="pwa-ios-modal">
+            <div class="modal-content glass-effect pwa-ios-content">
+                <button class="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+                <div class="pwa-ios-header">
+                    <img src="images/icon-512.svg" alt="Luxe Hotel" class="pwa-ios-icon">
+                    <h3>Install <span class="pwa-brand-accent">Luxe</span></h3>
+                    <p class="pwa-ios-tagline">Offline access · Fullscreen mode · Lightning fast</p>
+                </div>
+
+                <div class="pwa-ios-steps">
+                    <h4>How to Install</h4>
+                    <div class="pwa-step">
+                        <div class="pwa-step-number">1</div>
+                        <div class="pwa-step-content">
+                            <span>Tap the <strong>Share</strong> button</span>
+                            <i class="fa-solid fa-arrow-up-from-bracket pwa-step-icon"></i>
+                        </div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-number">2</div>
+                        <div class="pwa-step-content">
+                            <span>Scroll down and tap <strong>Add to Home Screen</strong></span>
+                            <i class="fa-solid fa-plus-square pwa-step-icon"></i>
+                        </div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-number">3</div>
+                        <div class="pwa-step-content">
+                            <span>Tap <strong>Add</strong> to confirm</span>
+                            <i class="fa-solid fa-check pwa-step-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="closeModals()">Got It</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="app.js"></script>
+    <script src="pwa.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# Local Database
+# We don't want to copy your local development DB containing test data. 
+# init_db.py will run in the container to create a fresh one.
+hotel.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# Docker files
+Dockerfile
+.dockerignore
